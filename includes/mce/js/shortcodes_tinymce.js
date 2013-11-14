@@ -49,6 +49,7 @@
 						a.render( c, "Skillbar", "skillbar" );
 						a.render( c, "Social Icon", "social" );
 						a.render( c, "Testimonial", "testimonial" );
+						a.render( c, "Countdown", "countdown" );
 						a.render( c, "HTML", "html" );
 					
 					b.addSeparator();
@@ -172,7 +173,7 @@
 					
 					// Button
 					if(id === "button") {
-						tinyMCE.activeEditor.selection.setContent('[wc_button type="primary" url="http://www.wordpresscanvas.com" title="Visit Site" target="self"]' + wcDummyContent + '[/wc_button]');
+						tinyMCE.activeEditor.selection.setContent('[wc_button type="primary" url="http://www.wordpresscanvas.com" title="Visit Site" target="self" position="float"]' + wcDummyContent + '[/wc_button]');
 					}
 					
 					
@@ -280,7 +281,7 @@
 					
 					// Pricing
 					if(id === "pricing") {
-						tinyMCE.activeEditor.selection.setContent('[wc_pricing featured="yes" plan="Basic" cost="$19.99" per="per month" button_url="#" button_text="Sign Up" button_target="self" button_rel="nofollow"]<ul><li>30GB Storage</li><li>512MB Ram</li><li>10 databases</li><li>1,000 Emails</li><li>25GB Bandwidth</li></ul>[/wc_pricing]');
+						tinyMCE.activeEditor.selection.setContent('[wc_pricing type="primary" featured="yes" plan="Basic" cost="$19.99" per="per month" button_url="#" button_text="Sign Up" button_target="self" button_rel="nofollow"]<ul><li>30GB Storage</li><li>512MB Ram</li><li>10 databases</li><li>1,000 Emails</li><li>25GB Bandwidth</li></ul>[/wc_pricing]');
 					}
 					
 					
@@ -319,7 +320,16 @@
 					
 					//Testimonial
 					if(id === "testimonial") {
-						tinyMCE.activeEditor.selection.setContent('[wc_testimonial by="Wordpress Canvas" position="left"]' + wcDummyContent + '[/wc_testimonial]');
+						tinyMCE.activeEditor.selection.setContent('[wc_testimonial by="Wordpress Canvas" url="" position="left"]' + wcDummyContent + '[/wc_testimonial]');
+					}
+					
+					
+					
+					//Countdown
+					if(id === "countdown") {
+						var d = new Date();
+						var year = d.getFullYear() + 1;
+						tinyMCE.activeEditor.selection.setContent('[wc_countdown date="July 23, '+year+', 6:00:00 PM" format="wdHMs" message="Happy New Year!"]');
 					}
 					
 					
