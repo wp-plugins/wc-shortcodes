@@ -402,24 +402,35 @@ if( !function_exists('wc_shortcodes_button') ) {
 			'target'		=> 'self',
 			'rel'			=> '',
 			'border_radius'	=> '',
-			'class'			=> '',
 			'icon_left'		=> '',
-			'icon_right'	=> ''
+			'icon_right'	=> '',
+			'position'		=> 'float',
 		), $atts ) );
-		
+
+		$whitelist = array( 'center', 'left', 'right' );
 		
 		// $border_radius_style = ( $border_radius ) ? 'style="border-radius:'. $border_radius .'"' : NULL;		
 		$rel = ( $rel ) ? 'rel="'.$rel.'"' : NULL;
 		$type = 'wc-shortcodes-button-' . $type;
 		
+		$class = array();
+		$class[] = 'wc-shortcodes-button';
+		$class[] = $type;
+		$class[] = 'wc-shortcodes-button-position-' . $position;
+		
 		$button = NULL;
-		$button .= '<a href="' . $url . '" class="wc-shortcodes-button ' . $type . ' '. $class .'" target="_'.$target.'" title="'. $title .'" '. $rel .'>';
+		$button .= '<a href="' . $url . '" class="'.implode( ' ', $class ).'" target="_'.$target.'" title="'. $title .'" '. $rel .'>';
 			$button .= '<span class="wc-shortcodes-button-inner">';
 				if ( $icon_left ) $button .= '<span class="wc-shortcodes-button-icon-left icon-'. $icon_left .'"></span>';
 				$button .= $content;
 				if ( $icon_right ) $button .= '<span class="wc-shortcodes-button-icon-right icon-'. $icon_right .'"></span>';
 			$button .= '</span>';			
 		$button .= '</a>';
+
+		if ( in_array( $position, $whitelist ) ) {
+			$button = '<div class="wc-shortcodes-button-'.$position.'">'. $button .'</div>';
+		}
+
 		return $button;
 	}
 	add_shortcode( 'wc_button', 'wc_shortcodes_button' );
@@ -467,10 +478,17 @@ if( !function_exists('wc_shortcodes_box') ) {
 if( !function_exists('wc_shortcodes_testimonial') ) { 
 	function wc_shortcodes_testimonial( $atts, $content = null  ) {
 		extract( shortcode_atts( array(
-			'by'	=> '',
-			'position'	=> 'left',
+			'by' => '',
+			'url' => '',
+			'position' => 'left',
 			'class'	=> '',
-		  ), $atts ) );
+		), $atts ) );
+
+		if ( ! empty( $url ) ) {
+			$url = esc_url( $url );
+			$by = '<a href="' . $url . '">' . $by . '</a>';
+		}
+
 		$testimonial_content = '';
 		$testimonial_content .= '<div class="wc-shortcodes-testimonial wc-shortcodes-clearfix wc-shortcodes-testimonial-'.$position.' '. $class .'"><div class="wc-shortcodes-testimonial-content">';
 		$testimonial_content .= $content;
@@ -845,4 +863,34 @@ if( !function_exists('wc_shortcodes_divider') ) {
 	 return '<hr class="wc-shortcodes-divider wc-shortcodes-divider-line-'.$line.' wc-shortcodes-divider-style-'. $style .' '. $class .'" '.$style_attr.' />';
 	}
 	add_shortcode( 'wc_divider', 'wc_shortcodes_divider' );
+}
+
+
+/*
+ * Countdown
+ * @since v1.10
+ */
+if( !function_exists('wc_shortcodes_countdown') ) {
+	function wc_shortcodes_countdown( $atts ) {
+		extract( shortcode_atts( array(
+			'date' => '',
+			'format' => 'wdHMs',
+			'message' => 'Happy New Year!',
+		), $atts ) );
+
+		if ( empty( $date ) ) {
+			return '<p>*Please enter a date for your countdown*</p>';
+		}
+
+		wp_enqueue_script('wc_shortcodes_countdown');
+
+		$html = '<div class="wc-shortcodes-countdown" data-date="'.esc_attr( $date ).'" data-format="'.esc_attr( $format ).'" data-message="'.esc_attr( $message ).'"></div>';
+		$html = '<div class="wc-shortcodes-countdown-bg1">'.$html.'</div>';
+		$html = '<div class="wc-shortcodes-countdown-bg2">'.$html.'</div>';
+		$html = '<div class="wc-shortcodes-countdown-bg3">'.$html.'</div>';
+		$html = '<div class="wc-shortcodes-countdown-bg4">'.$html.'</div>';
+
+		return $html;
+	}
+	add_shortcode( 'wc_countdown', 'wc_shortcodes_countdown' );
 }
