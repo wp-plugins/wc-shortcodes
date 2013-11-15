@@ -147,7 +147,7 @@ function wc_shortcodes_options_display_image_field( $args ) {
 	<div class="wc-shortcodes-image-field">
 		<input name="<?php echo $option_name; ?>" id="<?php echo $option_name; ?>" class="regular-text ltr upload-input" type="text" value="<?php echo esc_attr($val); ?>" />
 		<br />
-		<a class="button wc-shortcodes-image-upload" data-target="#<?php echo $option_name; ?>" data-preview=".wc-shortcodes-preview-image" data-frame="select" data-state="wordpresscanvas_insert_single" data-fetch="url" data-title="Insert Image" data-button="Insert" data-class="media-frame wc-shortcodes-custom-uploader" title="Add Media"><span class="wp-media-buttons-icon"></span> Add Media</a>
+		<a class="button wc-shortcodes-image-upload" data-target="#<?php echo $option_name; ?>" data-preview=".wc-shortcodes-preview-image" data-frame="select" data-state="wc_shortcodes_insert_single" data-fetch="url" data-title="Insert Image" data-button="Insert" data-class="media-frame wc-shortcodes-custom-uploader" title="Add Media"><span class="wp-media-buttons-icon"></span> Add Media</a>
 		<a class="button wc-shortcodes-restore-image" data-restore="<?php echo $default; ?>" data-target="#<?php echo $option_name; ?>" data-preview=".wc-shortcodes-preview-image">Default</a>
 		<a class="button wc-shortcodes-delete-image" data-target="#<?php echo $option_name; ?>" data-preview=".wc-shortcodes-preview-image">Delete</a>
 		<p class="wc-shortcodes-preview-image"<?php echo $style; ?>><img src="<?php echo esc_attr($val); ?>" /></p>
@@ -226,3 +226,19 @@ function wc_shortcodes_remember_last_options_tab() {
 	}
 }
 add_action( 'admin_init', 'wc_shortcodes_remember_last_options_tab' );
+
+/*
+ * On Activation
+ */
+function wc_shortcodes_options_activation_hook() {
+	global $wc_shortcodes_options;
+
+	foreach ( $wc_shortcodes_options as $o ) {
+		foreach ( $o['sections'] as $oo ) {
+			foreach ( $oo['options'] as $ooo ) {
+				$option_name = WC_SHORTCODES_PREFIX . $ooo['id'];
+				add_option( $option_name, $ooo['default'] );
+			}
+		}
+	}
+}
