@@ -88,7 +88,9 @@
 						a.render( c, "Dotted", "dottedDivider" );
 						a.render( c, "Double", "doubleDivider" );
 						a.render( c, "Triple", "tripleDivider" );
-						a.render( c, "Image", "imageDivider" );
+						a.render( c, "Image1", "imageDivider" );
+						a.render( c, "Image2", "imageDivider2" );
+						a.render( c, "Image3", "imageDivider3" );
 						
 					b.addSeparator();
 					
@@ -240,6 +242,12 @@
 					}
 					if(id === "imageDivider") {
 						tinyMCE.activeEditor.selection.setContent('[wc_divider style="image" margin_top="" margin_bottom=""]');
+					}
+					if(id === "imageDivider2") {
+						tinyMCE.activeEditor.selection.setContent('[wc_divider style="image2" margin_top="" margin_bottom=""]');
+					}
+					if(id === "imageDivider3") {
+						tinyMCE.activeEditor.selection.setContent('[wc_divider style="image3" margin_top="" margin_bottom=""]');
 					}
 					
 					
