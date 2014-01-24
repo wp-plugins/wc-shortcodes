@@ -985,3 +985,157 @@ if( !function_exists('wc_shortcodes_rsvp') ) {
 	}
 	add_shortcode( 'wc_rsvp', 'wc_shortcodes_rsvp' );
 }
+
+if( ! function_exists( 'wc_shortcodes_posts' ) ) {
+	/**
+	 * Display posts in various formats
+	 *
+	 * @since 3.8
+	 * @access public
+	 *
+	 * @param mixed $atts
+	 * @return void
+	 */
+	function wc_shortcodes_posts( $atts ) {
+		global $data;
+		global $post;
+
+		wp_enqueue_script('wc-shortcodes-posts');
+
+		if ( (is_front_page() || is_home() ) ) {
+			$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : ( ( get_query_var( 'page' ) ) ? get_query_var( 'page' ) : 1 );
+		} else {
+			$paged = ( get_query_var('paged') ) ? get_query_var( 'paged' ) : 1;
+		}
+
+		$atts = shortcode_atts( array(
+			'author' => '', //use author id
+			'author_name' => '', //use 'user_nicename' (NOT name).
+			'p' => false, //use post id.
+			'post__in' => false, //use post ids
+			'order' => 'DESC', // DESC, ASC
+			'orderby' => 'date',
+			'post_status' => 'publish',
+			'post_type' => 'post', // post, page, wc_portfolio_item, etc
+			'posts_per_page' => 10, //number of post to show per page
+			'nopaging' => false, //show all posts or use pagination. Default value is 'false', use paging.
+			'paged' => $paged, // number of page. Show the posts that would normally show up just on page X when using the "Older Entries" link.
+			'ignore_sticky_posts' => 0,
+
+			'taxonomy' => '', // category, post_tag, wc_portfolio_tag, etc
+			'field' => 'slug', // slug or id
+			'terms' => '', // taxonomy terms.
+
+			'title' => true, // show heading?
+			'meta_all' => true, // show all meta info?
+			'meta_author' => true, // show author?
+			'meta_date' => true, // show date?
+			'meta_comments' => true, // show comments?
+			'thumbnail' => true, // show thumbnail?
+			'content' => true, // show main content?
+			'paging' => true, // show pagination navigation?
+
+			'size' => 'large', // default thumbnail size
+
+			'filtering' => true, // insert isotope filter navigation
+			'columns' => '3', // default number of isotope columns
+			'gutter_space' => '0.020', // gutter width percentage relative to parent element width
+			'heading_type' => 'h2', // heading tag for title
+			'layout' => 'isotope', // blog layout
+		), $atts );
+
+		// clean input values
+		$atts['terms'] = wc_shortcodes_comma_delim_to_array( $atts['terms'] );
+		$atts['post__in'] = wc_shortcodes_comma_delim_to_array( $atts['post__in'] );
+		$atts['columns'] == (int) $atts['columns'];
+		$atts['order'] = strtoupper( $atts['order'] );
+		$atts['heading_type'] = strtolower( $atts['heading_type'] );
+
+		if ( ! is_numeric( $atts['gutter_space'] ) ) {
+			$atts['gutter_space'] = 0.020;
+		}
+		$atts['gutter_space'] = number_format( $atts['gutter_space'], 3 );
+		if ( $atts['gutter_space'] > 0.05 || $atts['gutter_space'] < 0.001 ) {
+			$atts['gutter_space'] = 0.020;
+		}
+		
+		if (isset($atts['posts_per_page']) && $atts['posts_per_page']) {
+			$atts['posts_per_page'] = (int) $atts['posts_per_page'];
+		}
+		else {
+			$atts['posts_per_page'] = 0;
+		}
+
+
+
+		// add tax query if user specified
+		if ( ! empty( $atts['terms'] ) ) {
+			$atts['tax_query'] = array(
+				array(
+					'taxonomy' => $atts['taxonomy'],
+					'field' => $atts['field'],
+					'terms' => $atts['terms'],
+				),
+			);
+		}
+
+		// no paging needed when showing all posts
+		if(isset($atts['posts_per_page']) && $atts['posts_per_page'] == -1) {
+			$atts['nopaging'] = true;
+		}
+
+		// setting attributes right for the php script
+		$valid_headings = array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' );
+		$atts['heading_type'] = in_array( $atts['heading_type'], $valid_headings ) ? $atts['heading_type'] : 'h2';
+
+		$valid_columns = array( 2, 3, 4, 5, 6, 7, 8, 9 );
+		$atts['columns'] = in_array( $atts['columns'], $valid_columns ) ? $atts['columns'] : 2;
+		
+		($atts['title'] == "yes") ? ($atts['title'] = true) : ($atts['title'] = false);
+		($atts['meta_all'] == "yes") ? ($atts['meta_all'] = true) : ($atts['meta_all'] = false);
+		($atts['meta_author'] == "yes") ? ($atts['meta_author'] = true) : ($atts['meta_author'] = false);
+		($atts['meta_date'] == "yes") ? ($atts['meta_date'] = true) : ($atts['meta_date'] = false);
+		($atts['meta_comments'] == "yes") ? ($atts['meta_comments'] = true) : ($atts['meta_comments'] = false);
+		($atts['thumbnail'] == "yes") ? ($atts['thumbnail'] = true) : ($atts['thumbnail'] = false);
+		($atts['content'] == "yes") ? ($atts['content'] = true) : ($atts['content'] = false);
+		($atts['paging'] == "yes") ? ($atts['paging'] = true) : ($atts['paging'] = false);
+		($atts['filtering'] == "yes") ? ($atts['filtering'] = true) : ($atts['filtering'] = false);
+		($atts['order'] == "ASC") ? ($atts['order'] = "ASC") : ($atts['order'] = "DESC");
+
+		$ml_query = new WP_Query($atts);
+
+		$html = '';
+
+		$class = array();
+		$class[] = 'wc-shortcodes-posts';
+		$class[] = 'wc-shortcodes-posts-col-' . $atts["columns"];
+		$class[] = 'wc-shortcodes-posts-layout-' . $atts['layout'];
+
+		$html .= '<div data-gutter-space="'.$atts["gutter_space"].'" data-columns="'.$atts["columns"].'" class="' . implode( ' ', $class ) . '">';
+
+		if ( $atts['filtering'] ) {
+			include( 'templates/nav-filtering.php' );
+		}
+
+		while( $ml_query->have_posts() ) :
+			$ml_query->the_post();
+
+			ob_start();
+			include('templates/index.php');
+			$html .= ob_get_clean();
+
+		endwhile;
+
+		$html .= '</div>';
+
+		//no paging if only the latest posts are shown
+		if ( $atts['paging'] ) {
+			ob_start();
+			include('templates/nav-pagination.php');
+			$html .= ob_get_clean();
+		}
+		wp_reset_query();
+		return $html;
+	}
+}
+add_shortcode( 'wc_posts', 'wc_shortcodes_posts' );
