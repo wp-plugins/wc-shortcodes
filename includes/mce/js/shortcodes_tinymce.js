@@ -144,7 +144,7 @@
 					
 					// Accordion
 					if(id === "accordion") {
-						tinyMCE.activeEditor.selection.setContent('<p>[wc_accordion collapse="0"][wc_accordion_section title="Section 1"]</p>' + wcParagraphContent + '<p>[/wc_accordion_section][wc_accordion_section title="Section 2"]</p>' + wcParagraphContent + '<p>[/wc_accordion_section][/wc_accordion]</p>');
+						tinyMCE.activeEditor.selection.setContent('<p>[wc_accordion collapse="0"]</p><p>[wc_accordion_section title="Section 1"]</p>' + wcParagraphContent + '<p>[/wc_accordion_section]</p><p>[wc_accordion_section title="Section 2"]</p>' + wcParagraphContent + '<p>[/wc_accordion_section]</p><p>[/wc_accordion]</p>');
 					}
 					
 					
@@ -274,7 +274,7 @@
 					
 					// Google Map
 					if(id === "googlemap") {
-						tinyMCE.activeEditor.selection.setContent('[wc_googlemap title="St. Paul\'s Chapel" location="209 Broadway, New York, NY 10007" zoom="10" height="250"]');
+						tinyMCE.activeEditor.selection.setContent('[wc_googlemap title="St. Paul\'s Chapel" location="209 Broadway, New York, NY 10007" zoom="10" height="250" title_on_load="no" class=""]');
 					}
 					
 					
