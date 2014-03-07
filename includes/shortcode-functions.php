@@ -405,7 +405,10 @@ if( !function_exists('wc_shortcodes_button') ) {
 			'icon_left'		=> '',
 			'icon_right'	=> '',
 			'position'		=> 'float',
+			'class'			=> '',
 		), $atts ) );
+
+		$custom_class = sanitize_title( $class );
 
 		$whitelist = array( 'center', 'left', 'right' );
 		
@@ -417,6 +420,8 @@ if( !function_exists('wc_shortcodes_button') ) {
 		$class[] = 'wc-shortcodes-button';
 		$class[] = $type;
 		$class[] = 'wc-shortcodes-button-position-' . $position;
+		if ( ! empty( $custom_class ) )
+			$class[] = $custom_class;
 		
 		$button = NULL;
 		$button .= '<a href="' . $url . '" class="'.implode( ' ', $class ).'" target="_'.$target.'" title="'. $title .'" '. $rel .'>';
@@ -712,15 +717,15 @@ if( !function_exists('wc_shortcodes_pricing') ) {
 	function wc_shortcodes_pricing( $atts, $content = null  ) {
 		
 		extract( shortcode_atts( array(
-			'type'					=> 'primary',
-			'plan'					=> 'Basic',
-			'cost'					=> '$20',
-			'per'					=> 'month',
-			'button_url'			=> '',
-			'button_text'			=> 'Purchase',
-			'button_target'			=> 'self',
-			'button_rel'			=> 'nofollow',
-			'class'					=> '',
+			'type'					=> 'primary', // primary, secondary, inverse
+			'plan'					=> 'Basic', // string
+			'cost'					=> '$20', // string
+			'per'					=> 'month', // month, day, year, week, etc
+			'button_url'			=> '', // url to payment gateway
+			'button_text'			=> 'Purchase', // call to action button
+			'button_target'			=> 'self', // self, blank
+			'button_rel'			=> 'nofollow', // alternate, author, bookmark, help, license, next, nofollow, noreferrer, prefetch, prev, search, tag
+			'class'					=> '', // add your own css class for customization.
 		), $atts ) );
 		
 		//start content  
