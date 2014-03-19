@@ -5,15 +5,16 @@ Plugin URI: http://wordpresscanvas.com/features/shortcodes/
 Description: A family of shortcodes to enhance site functionality.
 Author: Chris Baldelomar
 Author URI: http://webplantmedia.com/
-Version: 1.31
+Version: 1.32
 License: GPLv2 or later
 */
 
-define( 'WC_SHORTCODES_VERSION', '1.31' );
+define( 'WC_SHORTCODES_VERSION', '1.32' );
 define( 'WC_SHORTCODES_PREFIX', 'wc_shortcodes_' );
 define( '_WC_SHORTCODES_PREFIX', '_wc_shortcodes_' );
 define( 'WC_SHORTCODES_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'WC_SHORTCODES_CURRENT_VERSION', get_option( WC_SHORTCODES_PREFIX . 'current_version' ) );
+define( 'WC_SHORTCODES_FONT_AWESOME_ENABLED', get_option( WC_SHORTCODES_PREFIX . 'enable_font_awesome', true ) );
 
 global $wc_shortcodes_options;
 
