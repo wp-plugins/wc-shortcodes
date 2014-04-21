@@ -585,7 +585,20 @@ if( !function_exists('wc_shortcodes_toggle') ) {
 			'class'	=> '',
 			'padding'	=> '',
 			'border_width'	=> '',
+			'layout' => 'box',
 		), $atts ) );
+
+		$classes = array();
+
+		$classes[] = 'wc-shortcodes-toggle';
+
+		if ( ! empty( $class ) )
+			$classes[] = $class;
+
+		if ( ! empty( $layout ) )
+			$classes[] = 'wc-shortcodes-toggle-layout-' . $layout;
+
+		$class = implode( ' ', $classes );
 
 		$style = array();
 
@@ -600,7 +613,7 @@ if( !function_exists('wc_shortcodes_toggle') ) {
 		wp_enqueue_script('wc-shortcodes-toggle');
 		
 		// Display the Toggle
-		return '<div class="wc-shortcodes-toggle '. $class .'"><div class="wc-shortcodes-toggle-trigger"><a href="#">'. $title .'</a></div><div style="'.$style.'" class="wc-shortcodes-toggle-container">' . do_shortcode($content) . '</div></div>';
+		return '<div class="'. $class .'"><div class="wc-shortcodes-toggle-trigger"><a href="#">'. $title .'</a></div><div style="'.$style.'" class="wc-shortcodes-toggle-container">' . do_shortcode($content) . '</div></div>';
 	}
 }
 
@@ -618,18 +631,31 @@ if( !function_exists('wc_shortcodes_accordion_main') ) {
 		extract( shortcode_atts( array(
 			'class'	=> '',
 			'collapse' => 0,
+			'layout' => 'box',
 		), $atts ) );
 
-		$type = 'wc-shortcodes-accordion-default';
+		$classes = array();
+
+		$classes[] = 'wc-shortcodes-accordion';
 
 		if ( (int) $collapse )
-			$type = 'wc-shortcodes-accordion-collapse';
-		
+			$classes[] = 'wc-shortcodes-accordion-collapse';
+		else
+			$classes[] = 'wc-shortcodes-accordion-default';
+
+		if ( ! empty( $class ) )
+			$classes[] = $class;
+
+		if ( ! empty( $layout ) )
+			$classes[] = 'wc-shortcodes-accordion-layout-' . $layout;
+
+		$class = implode( ' ', $classes );
+
 		// Enque scripts
 		wp_enqueue_script('wc-shortcodes-accordion');
 		
 		// Display the accordion	
-		return '<div class="wc-shortcodes-accordion '.$type.' '. $class .'">' . do_shortcode($content) . '</div>';
+		return '<div class="'. $class .'">' . do_shortcode($content) . '</div>';
 	}
 }
 
@@ -640,20 +666,9 @@ if( !function_exists('wc_shortcodes_accordion_section') ) {
 		extract( shortcode_atts( array(
 			'title'	=> 'Title',
 			'class'	=> '',
-			'padding'	=> '',
-			'border_width'	=> '',
 		), $atts ) );
 
-		$style = array();
-
-		if ( ! empty( $padding ) || '0' === $padding )
-			$style[] = 'padding:'.$padding;
-		if ( ! empty( $border_width ) || '0' === $border_width )
-			$style[] = 'border-width:'.$border_width;
-
-		$style = implode( ';', $style );
-		  
-		return '<div class="wc-shortcodes-accordion-trigger '. $class .'"><a href="#">'. $title .'</a></div><div style="'.$style.'" class="wc-shortcodes-accordion-content">' . do_shortcode($content) . '</div>';
+		return '<div class="wc-shortcodes-accordion-trigger '. $class .'"><a href="#">'. $title .'</a></div><div class="wc-shortcodes-accordion-content">' . do_shortcode($content) . '</div>';
 	}
 	
 }
@@ -671,14 +686,30 @@ if (!function_exists('wc_shortcodes_tabgroup')) {
 		wp_enqueue_script('wc-shortcodes-tabs');
 		
 		// Display Tabs
-		$defaults = array();
+		$defaults = array(
+			'class'	=> '',
+			'layout' => 'box',
+		);
 		extract( shortcode_atts( $defaults, $atts ) );
+
+		$classes = array();
+
+		$classes[] = 'wc-shortcodes-tabs';
+
+		if ( ! empty( $class ) )
+			$classes[] = $class;
+
+		if ( ! empty( $layout ) )
+			$classes[] = 'wc-shortcodes-tabs-layout-' . $layout;
+
+		$class = implode( ' ', $classes );
+
 		preg_match_all( '/tab title="([^\"]+)"/i', $content, $matches, PREG_OFFSET_CAPTURE );
 		$tab_titles = array();
 		if( isset($matches[1]) ){ $tab_titles = $matches[1]; }
 		$output = '';
 		if( count($tab_titles) ){
-		    $output .= '<div id="wc-shortcodes-tab-'. rand(1, 100) .'" class="wc-shortcodes-tabs">';
+		    $output .= '<div class="'.$class.'">';
 			$output .= '<ul class="ui-tabs-nav wc-shortcodes-clearfix">';
 			foreach( $tab_titles as $tab ){
 				$output .= '<li><a href="#wc-shortcodes-tab-'. sanitize_title( $tab[0] ) .'">' . $tab[0] . '</a></li>';
@@ -696,10 +727,16 @@ if (!function_exists('wc_shortcodes_tab')) {
 	function wc_shortcodes_tab( $atts, $content = null ) {
 		$defaults = array(
 			'title'	=> 'Tab',
-			'class'	=> ''
 		);
 		extract( shortcode_atts( $defaults, $atts ) );
-		return '<div id="wc-shortcodes-tab-'. sanitize_title( $title ) .'" class="tab-content '. $class .'">'. do_shortcode( $content ) .'</div>';
+
+		$classes = array();
+
+		$classes[] = 'tab-content';
+
+		$class = implode( ' ', $classes );
+
+		return '<div id="wc-shortcodes-tab-'. sanitize_title( $title ) .'" class="'. $class .'">'. do_shortcode( $content ) .'</div>';
 	}
 }
 
@@ -829,7 +866,7 @@ if (! function_exists( 'wc_shortcodes_googlemaps' ) ) :
 		wp_enqueue_script('wc-shortcodes-googlemap-api');
 		
 		
-		$output = '<div id="map_canvas_'.rand(1, 100).'" class="googlemap '. $class .'" style="height:'.$height.'px;width:100%">';
+		$output = '<div class="googlemap '. $class .'" style="height:'.$height.'px;width:100%">';
 			$output .= (!empty($title)) ? '<input class="title" type="hidden" value="'.$title.'" />' : '';
 			$output .= '<input class="location" type="hidden" value="'.$location.'" />';
 			$output .= '<input class="zoom" type="hidden" value="'.$zoom.'" />';
@@ -1179,6 +1216,8 @@ if( !function_exists('wc_shortcodes_image') ) {
 			'text_color' => '',
 			'background_color' => '',
 			'font_size' => '',
+			'text_align' => '', // none, left, center, right
+			'flag_width' => '',
 
 			// misc options
 			'class' => '',
@@ -1233,6 +1272,11 @@ if( !function_exists('wc_shortcodes_image') ) {
 				$style[] = 'color:' . $text_color;
 			if ( is_numeric( $font_size ) )
 				$style[] = 'font-size:' . (int) $font_size . 'px';
+			if ( in_array( $text_align, $whitelist ) )
+				$style[] = 'text-align:' . $text_align;
+			if ( is_numeric( $flag_width ) && ! empty( $flag_width ) )
+				$style[] = 'width:' . (int) $flag_width . 'px';
+
 
 			$html .= '<span style="' . implode( ';', $style ) . '" class="wc-shortcodes-image-flag-bg"><span class="wc-shortcodes-image-flag-text">' . esc_html( $flag ) . '</span></span>';
 			$div_wrapper = true;

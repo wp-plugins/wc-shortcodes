@@ -133,7 +133,7 @@
 							{
 								text: "Image",
 								onclick: function(){
-									editor.insertContent('[wc_image attachment_id="" size="" title="" alt="" caption="" link_to="post" url="" align="none" flag="For Sale" left="" top="" right="0" bottom="20" text_color="" background_color="" font_size=""][/wc_image]');
+									editor.insertContent('[wc_image attachment_id="" size="" title="" alt="" caption="" link_to="post" url="" align="none" flag="For Sale" left="" top="" right="0" bottom="20" text_color="" background_color="" font_size="" text_align="center" flag_width=""][/wc_image]');
 								}
 							},
 							{
@@ -164,43 +164,43 @@
 							{
 								text: "Primary",
 								onclick: function(){
-									editor.insertContent('[wc_box color="primary" text_align="left"]' + wcDummyContent + '[/wc_box]');
+									editor.insertContent('[wc_box color="primary" text_align="left"]' + wcParagraphContent + '[/wc_box]');
 								}
 							},
 							{
 								text: "Secondary",
 								onclick: function(){
-									editor.insertContent('[wc_box color="secondary" text_align="left"]' + wcDummyContent + '[/wc_box]');
+									editor.insertContent('[wc_box color="secondary" text_align="left"]' + wcParagraphContent + '[/wc_box]');
 								}
 							},
 							{
 								text: "Inverse",
 								onclick: function(){
-									editor.insertContent('[wc_box color="inverse" text_align="left"]' + wcDummyContent + '[/wc_box]');
+									editor.insertContent('[wc_box color="inverse" text_align="left"]' + wcParagraphContent + '[/wc_box]');
 								}
 							},
 							{
 								text: "Success",
 								onclick: function(){
-									editor.insertContent('[wc_box color="success" text_align="left"]' + wcDummyContent + '[/wc_box]');
+									editor.insertContent('[wc_box color="success" text_align="left"]' + wcParagraphContent + '[/wc_box]');
 								}
 							},
 							{
 								text: "Warning",
 								onclick: function(){
-									editor.insertContent('[wc_box color="warning" text_align="left"]' + wcDummyContent + '[/wc_box]');
+									editor.insertContent('[wc_box color="warning" text_align="left"]' + wcParagraphContent + '[/wc_box]');
 								}
 							},
 							{
 								text: "Danger",
 								onclick: function(){
-									editor.insertContent('[wc_box color="danger" text_align="left"]' + wcDummyContent + '[/wc_box]');
+									editor.insertContent('[wc_box color="danger" text_align="left"]' + wcParagraphContent + '[/wc_box]');
 								}
 							},
 							{
 								text: "Info",
 								onclick: function(){
-									editor.insertContent('[wc_box color="info" text_align="left"]' + wcDummyContent + '[/wc_box]');
+									editor.insertContent('[wc_box color="info" text_align="left"]' + wcParagraphContent + '[/wc_box]');
 								}
 							}
 						]
@@ -293,19 +293,19 @@
 							{
 								text: "Accordion",
 								onclick: function(){
-									editor.insertContent('[wc_accordion collapse="0"]<p>[wc_accordion_section title="Section 1"]</p>' + wcParagraphContent + '<p>[/wc_accordion_section]</p><p>[wc_accordion_section title="Section 2"]</p>' + wcParagraphContent + '<p>[/wc_accordion_section]</p>[/wc_accordion]');
+									editor.insertContent('[wc_accordion collapse="0" layout="box"]<p>[wc_accordion_section title="Section 1"]</p>' + wcParagraphContent + '<p>[/wc_accordion_section]</p><p>[wc_accordion_section title="Section 2"]</p>' + wcParagraphContent + '<p>[/wc_accordion_section]</p>[/wc_accordion]');
 								}
 							},
 							{
 								text: "Tabs",
 								onclick: function(){
-									editor.insertContent('[wc_tabgroup][wc_tab title="First Tab"]'+wcParagraphContent+'<p>[/wc_tab][wc_tab title="Second Tab"]</p>'+wcParagraphContent+'[/wc_tab][/wc_tabgroup]');
+									editor.insertContent('[wc_tabgroup layout="box"][wc_tab title="First Tab"]'+wcParagraphContent+'<p>[/wc_tab][wc_tab title="Second Tab"]</p>'+wcParagraphContent+'[/wc_tab][/wc_tabgroup]');
 								}
 							},
 							{
 								text: "Toggle",
 								onclick: function(){
-									editor.insertContent('[wc_toggle title="This Is Your Toggle Title" padding="" border_width=""]' + wcParagraphContent + '[/wc_toggle]');
+									editor.insertContent('[wc_toggle title="This Is Your Toggle Title" layout="box"]' + wcParagraphContent + '[/wc_toggle]');
 								}
 							}
 						]
