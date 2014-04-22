@@ -1,126 +1,105 @@
 ( function( $ ) {
 	"use strict";
 
-	// Modified Isotope methods for gutters in masonry
-	$.Isotope.prototype._getMasonryGutterColumns = function() {
-		var gutter = this.options.masonry && this.options.masonry.gutterWidth || 0;
-		var containerWidth = this.element.width();
-	 
-		this.masonry.columnWidth = this.options.masonry && this.options.masonry.columnWidth ||
-		// Or use the size of the first item
-		this.$filteredAtoms.outerWidth(true) ||
-		// If there's no items, use size of container
-		containerWidth;
-	 
-		this.masonry.columnWidth += gutter;
-	 
-		this.masonry.cols = Math.floor((containerWidth + gutter) / this.masonry.columnWidth);
-		this.masonry.cols = Math.max(this.masonry.cols, 1);
-	};
-	 
-	$.Isotope.prototype._masonryReset = function() {
-		// Layout-specific props
-		this.masonry = {};
-		// FIXME shouldn't have to call this again
-		this._getMasonryGutterColumns();
-		var i = this.masonry.cols;
-		this.masonry.colYs = [];
-		while (i--) {
-			this.masonry.colYs.push(0);
+	var calculateGrid = function($container) {
+		var columns = parseInt( $container.data('columns') );
+		var gutterSpace = $container.data('gutterSpace');
+		var containerWidth = $container.width();
+
+		if ( isNaN( gutterSpace ) ) {
+			gutterSpace = .020;
 		}
-	};
-	 
-	$.Isotope.prototype._masonryResizeChanged = function() {
-		var prevSegments = this.masonry.cols;
-		// Update cols/rows
-		this._getMasonryGutterColumns();
-		// Return if updated cols/rows is not equal to previous
-		return (this.masonry.cols !== prevSegments);
-	};
+		else if ( gutterSpace > 0.05 || gutterSpace < 0 ) {
+			gutterSpace = .020;
+		}
+
+		if ( containerWidth < 568 ) { columns = 1; }
+		else if ( containerWidth < 768 ) { columns -= 2; }
+		else if ( containerWidth < 991 ) { 
+			columns -= 1;
+			if ( columns < 2 ) {
+				columns = 2;
+			}
+		}
+
+		if ( columns < 1 ) {
+			columns = 1;
+		}
+
+		var gutterWidth = Math.floor( containerWidth * gutterSpace );
+
+		var allGutters = gutterWidth * ( columns - 1 );
+		var contentWidth = containerWidth - allGutters;
+
+		var columnWidth = Math.floor( contentWidth / columns );
+
+		return {columnWidth: columnWidth, gutterWidth: gutterWidth, columns: columns};
+	}
+
+	var runMasonry = function( duration, $container) {
+		var $postBox = $container.children('.wc-shortcodes-post-box');
+
+		var o = calculateGrid($container);
+		console.log(o);
+
+		var marginBottom = o.gutterWidth;
+		if ( 1 == o.columns ) {
+			marginBottom = 20;
+		}
+
+		$postBox.css({'width':o.columnWidth+'px', 'margin-bottom':marginBottom+'px', 'padding':'0'});
+
+		$container.masonry( {
+			itemSelector: '.wc-shortcodes-post-box',
+			columnWidth: o.columnWidth,
+			gutter: o.gutterWidth,
+			transitionDuration: duration 
+		} );
+	}
 
 	$(document).ready(function(){
-		var $container = $('.wc-shortcodes-posts');
-		var $postBox = $container.children('.wc-shortcodes-post-box');
-		var columnWidth = 0;
-		var gutterWidth = 0;
+		$('.wc-shortcodes-posts').each( function() {
+			var $container = $(this);
+			var $postBox = $container.children('.wc-shortcodes-post-box');
 
-		var calculateGrid = function() {
-			var columns = parseInt( $container.data('columns') );
-			var gutterSpace = $container.data('gutterSpace');
-			var containerWidth = $container.width();
-			var marginBottom = 0;
 
-			if ( isNaN( gutterSpace ) ) {
-				gutterSpace = .020;
-			}
-			else if ( gutterSpace > 0.05 || gutterSpace < 0 ) {
-				gutterSpace = .020;
-			}
+			// keeps the media elements from calculating for the full width of the post
+			runMasonry(0, $container);
 
-			if ( containerWidth < 568 ) { columns = 1; }
-			else if ( containerWidth < 768 ) { columns -= 2; }
-			else if ( containerWidth < 991 ) { 
-				columns -= 1;
-				if ( columns < 2 ) {
-					columns = 2;
-				}
-			}
+			imagesLoaded( $container, function() {
+				runMasonry(0, $container);
 
-			if ( columns < 1 ) {
-				columns = 1;
-			}
-
-			gutterWidth = Math.floor( containerWidth * gutterSpace );
-
-			var allGutters = gutterWidth * ( columns - 1 );
-			var contentWidth = containerWidth - allGutters;
-
-			columnWidth = Math.floor( contentWidth / columns );
-
-			marginBottom = gutterWidth;
-			if ( 1 == columns ) {
-				marginBottom = 20;
-			}
-			$postBox.css({'width':columnWidth+'px', 'marginBottom':marginBottom+'px', 'padding':'0'});
-		}
-
-		calculateGrid();
-
-		$container.isotope({
-			itemSelector : '.wc-shortcodes-post-box',
-			resizable: false,
-			masonry: {
-				columnWidth: columnWidth,
-				gutterWidth: gutterWidth
-			}
-		});
-
-		$container.imagesLoaded( function(){
-			calculateGrid();
-
-			$container.isotope({
-				itemSelector : '.wc-shortcodes-post-box',
-				resizable: false,
-				masonry: {
-					columnWidth: columnWidth,
-					gutterWidth: gutterWidth
-				}
+				$container.css('visibility', 'visible');
 			});
 
-			$postBox.css('visibility', 'visible');
-			$container.addClass('wc-shortcodes-posts-animation');
-		});
-		$(window).smartresize(function(){
-			calculateGrid();
-			$container.isotope({
-				masonry: {
-					columnWidth: columnWidth,
-					gutterWidth: gutterWidth
-				}
+			$(window).resize(function() {
+				runMasonry(0, $container);
+			});
+
+			$container.find(".wc-shortcodes-post-box .rslides").responsiveSlides({
+				auto: false,             // Boolean: Animate automatically, true or false
+				speed: 500,            // Integer: Speed of the transition, in milliseconds
+				timeout: 4000,          // Integer: Time between slide transitions, in milliseconds
+				pager: false,           // Boolean: Show pager, true or false
+				nav: true,             // Boolean: Show navigation, true or false
+				random: false,          // Boolean: Randomize the order of the slides, true or false
+				pause: false,           // Boolean: Pause on hover, true or false
+				pauseControls: true,    // Boolean: Pause when hovering controls, true or false
+				prevText: "",   // String: Text for the "previous" button
+				nextText: "",       // String: Text for the "next" button
+				maxwidth: "",           // Integer: Max-width of the slideshow, in pixels
+				navContainer: "",       // Selector: Where controls should be appended to, default is after the 'ul'
+				manualControls: "",     // Selector: Declare custom pager navigation
+				namespace: "rslides",   // String: Change the default namespace used
+				before: function(){},   // Function: Before callback
+				after: function(){
+					runMasonry(0, $container);
+				}// Function: After callback
 			});
 		});
 
-		var $term = $('.wc-shortcodes-filtering .wc-shortcodes-term');
+		var $filterNav = $('.wc-shortcodes-filtering');
+		var $term = $filterNav.find('.wc-shortcodes-term');
 		$term.click( function( event ) {
 			event.preventDefault();
 
@@ -128,14 +107,24 @@
 			$(this).addClass('wc-shortcodes-term-active');
 
 			var selector = $(this).attr('data-filter');
-			$container.isotope({
-				filter: selector,
-				masonry: {
-					columnWidth: columnWidth,
-					gutterWidth: gutterWidth
+			var target = $filterNav.data('target');
+			var $target = $(target);
+			$target.animate({opacity: 0}, 300, function() {
+				if ( '*' == selector ) {
+					$target.find('.wc-shortcodes-post-box').show();
 				}
+				else {
+					$target.find('.wc-shortcodes-post-box').hide();
+					$target.find(selector).show();
+				}
+
+				runMasonry(0, $target);
+
+				$target.animate({opacity: 1}, 300);
 			});
+
 			return false;
 		});
+
 	});
 } )( jQuery );
