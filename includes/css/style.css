@@ -63,33 +63,24 @@
 .wc-shortcodes-font-awesome-enabled .wc-shortcodes-accordion .wc-shortcodes-accordion-trigger a:hover:before {
 	text-decoration: none;
 }
-.wc-shortcodes-font-awesome-enabled .wc-shortcodes-accordion .wc-shortcodes-accordion-trigger.ui-accordion-header-active a:before {
+.wc-shortcodes-font-awesome-enabled .wc-shortcodes-accordion .wc-shortcodes-accordion-trigger.wc-shortcodes-accordion-header-active a:before {
 		content: "\f107";
 }
-
 .wc-shortcodes-accordion .wc-shortcodes-accordion-trigger:first-child {
 	margin-top: 0; 
 }
-.wc-shortcodes-accordion .ui-state-focus {
-	outline: none 
-}
-.wc-shortcodes-accordion .wc-shortcodes-accordion-trigger.ui-state-hover { }
-.wc-shortcodes-accordion .wc-shortcodes-accordion-trigger.ui-state-active { }
-.wc-shortcodes-accordion .wc-shortcodes-accordion-trigger.ui-state-active a { }
 .wc-shortcodes-accordion .wc-shortcodes-accordion-content {
 	padding: 20px;
 	border: 1px solid #cccccc;
 	border-top: 0px; 
+	display: none;
 }
 .wc-shortcodes-accordion.wc-shortcodes-accordion-layout-none .wc-shortcodes-accordion-content {
 	padding: 20px 0;
 	border-width: 0;
 }
-.wc-shortcodes-accordion .ui-accordion-content *:last-child {
+.wc-shortcodes-accordion .wc-shortcodes-accordion-content *:last-child {
 	margin-bottom: 0 
-}
-.wc-shortcodes-accordion .ui-icon {
-	position: absolute; 
 }
 
 
@@ -175,13 +166,13 @@
 .wc-shortcodes-tabs {
 	margin-bottom: 20px; 
 }
-.wc-shortcodes-tabs ul.ui-tabs-nav {
+.wc-shortcodes-tabs ul.wcs-tabs-nav {
 	display: block;
 	margin: 0;
 	padding: 0;
 	border-bottom: solid 1px #cccccc; 
 }
-.wc-shortcodes-tabs ul.ui-tabs-nav li {
+.wc-shortcodes-tabs ul.wcs-tabs-nav li {
 	display: block;
 	width: auto;
 	padding: 0;
@@ -189,7 +180,7 @@
 	margin: 0 0 -1px 0;
 	outline: none; 
 }
-.wc-shortcodes-tabs ul.ui-tabs-nav li a {
+.wc-shortcodes-tabs ul.wcs-tabs-nav li a {
 	display: block;
 	width: auto;
 	padding: 10px 20px;
@@ -198,19 +189,18 @@
 	margin-right: 3px;
 	outline: none; 
 }
-.wc-shortcodes-tabs ul.ui-tabs-nav li a:hover { }
-.wc-shortcodes-tabs ul.ui-tabs-nav .ui-state-active a {
+.wc-shortcodes-tabs ul.wcs-tabs-nav .wcs-state-active a {
 	background-color: #ffffff;
 	border-bottom-width: 0;
 	border-bottom-color: transparent; 
 }
-.wc-shortcodes-tabs ul.ui-tabs-nav .ui-state-active a:hover { }
 .wc-shortcodes-tabs .tab-content {
 	background: #ffffff;
 	padding: 20px;
 	border-left: solid 1px #cccccc;
 	border-right: solid 1px #cccccc;
 	border-bottom: solid 1px #cccccc; 
+	display: none;
 }
 .wc-shortcodes-tabs.wc-shortcodes-tabs-layout-none .tab-content {
 	padding: 20px 0;
@@ -218,9 +208,6 @@
 }
 .wc-shortcodes-tabs .tab-content *:last-child {
 	margin-bottom: 0 
-}
-.wc-shortcodes-tabs .ui-tabs-hide {
-	display: none 
 }
 
 

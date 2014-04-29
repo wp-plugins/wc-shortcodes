@@ -293,13 +293,13 @@
 							{
 								text: "Accordion",
 								onclick: function(){
-									editor.insertContent('[wc_accordion collapse="0" layout="box"]<p>[wc_accordion_section title="Section 1"]</p>' + wcParagraphContent + '<p>[/wc_accordion_section]</p><p>[wc_accordion_section title="Section 2"]</p>' + wcParagraphContent + '<p>[/wc_accordion_section]</p>[/wc_accordion]');
+									editor.insertContent('[wc_accordion collapse="0" leaveopen="0" layout="box"]<p>[wc_accordion_section title="Section 1"]</p>' + wcParagraphContent + '<p>[/wc_accordion_section]</p><p>[wc_accordion_section title="Section 2"]</p>' + wcParagraphContent + '<p>[/wc_accordion_section]</p>[/wc_accordion]');
 								}
 							},
 							{
 								text: "Tabs",
 								onclick: function(){
-									editor.insertContent('[wc_tabgroup layout="box"][wc_tab title="First Tab"]'+wcParagraphContent+'<p>[/wc_tab][wc_tab title="Second Tab"]</p>'+wcParagraphContent+'[/wc_tab][/wc_tabgroup]');
+									editor.insertContent('[wc_tabgroup layout="box"]<p>[wc_tab title="First Tab"]</p>'+wcParagraphContent+'<p>[/wc_tab]</p><p>[wc_tab title="Second Tab"]</p>'+wcParagraphContent+'<p>[/wc_tab]</p>[/wc_tabgroup]');
 								}
 							},
 							{
