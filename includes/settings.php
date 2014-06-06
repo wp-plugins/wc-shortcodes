@@ -1,10 +1,21 @@
 <?php
 function wc_shortcodes_options_enqueue_scripts() {
-	wp_register_style( 'wc-shortcodes-options', WC_SHORTCODES_PLUGIN_URL . 'includes/css/admin.css', array(), WC_SHORTCODES_VERSION, 'all' );
-	wp_enqueue_style( 'wc-shortcodes-options' );
+	global $wc_shortcodes_plugin_screen_hook_suffix;
 
-	wp_register_script( 'wc-shortcodes-options-js', WC_SHORTCODES_PLUGIN_URL . 'includes/js/admin.js', array('jquery'), WC_SHORTCODES_VERSION, true );
-	wp_enqueue_script( 'wc-shortcodes-options-js' );
+	if ( ! isset( $wc_shortcodes_plugin_screen_hook_suffix ) ) {
+		return;
+	}
+
+	$screen = get_current_screen();
+
+	if ( $wc_shortcodes_plugin_screen_hook_suffix == $screen->id ) {
+		wp_register_style( 'wc-shortcodes-options', WC_SHORTCODES_PLUGIN_URL . 'includes/css/admin.css', array(), WC_SHORTCODES_VERSION, 'all' );
+		wp_enqueue_style( 'wc-shortcodes-options' );
+
+		wp_enqueue_media();
+		wp_register_script( 'wc-shortcodes-options-js', WC_SHORTCODES_PLUGIN_URL . 'includes/js/admin.js', array('jquery'), WC_SHORTCODES_VERSION, true );
+		wp_enqueue_script( 'wc-shortcodes-options-js' );
+	}
 }
 add_action('admin_enqueue_scripts', 'wc_shortcodes_options_enqueue_scripts' );
 
@@ -27,13 +38,15 @@ add_action( 'admin_init', 'wc_shortcodes_options_init' );
 
 function wc_shortcodes_options_admin_menu() {
 	global $wc_shortcodes_options;
+	global $wc_shortcodes_plugin_screen_hook_suffix;
 
 	foreach ( $wc_shortcodes_options as $tab => $o ) {
 		$view_hook_name = add_submenu_page( 'options.php', $o['title'], $o['title'], 'manage_options', 'wc-shortcodes-options-' . $tab, 'wc_shortcodes_options_display_page' );
 	}
 
 	// add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function );
-	$view_hook_name = add_submenu_page( 'themes.php', 'WC Shortcodes', 'WC Shortcodes', 'manage_options', 'wc-shortcodes-options', 'wc_shortcodes_options_display_page' );
+	$view_hook_name = add_submenu_page( 'themes.php', 'Shortcodes', 'Shortcodes', 'manage_options', 'wc-shortcodes-options', 'wc_shortcodes_options_display_page' );
+	$wc_shortcodes_plugin_screen_hook_suffix = $view_hook_name;
 }
 add_action( 'admin_menu', 'wc_shortcodes_options_admin_menu' );
 
@@ -123,6 +136,9 @@ function wc_shortcodes_options_display_setting( $args ) {
 		case 'pixel' :
 			wc_shortcodes_options_display_pixel_input_field( $args );
 			break;
+		case 'share_buttons' :
+			wc_shortcodes_options_display_share_buttons_field( $args );
+			break;
 		case 'emails' :
 		default :
 			wc_shortcodes_options_input_field( $args );
@@ -141,6 +157,49 @@ function wc_shortcodes_options_input_field( $args ) {
 	<?php endif; ?>
 
 	<input name="<?php echo $option_name; ?>" id="<?php echo $option_name; ?>" type="text" value="<?php echo esc_attr($val); ?>" class="regular-text" />
+	<?php if ( isset( $description ) && !empty( $description ) ) : ?>
+		<p class="description"><?php echo $description; ?></p>
+	<?php endif; ?>
+	<?php
+}
+function wc_shortcodes_options_display_share_buttons_field( $args ) {
+	global $wc_shortcodes_share_buttons;
+
+	extract( $args );
+
+	$val = get_option( $option_name, $default );
+	$not_selected = $wc_shortcodes_share_buttons;
+
+	?>
+
+	<?php if ( isset( $label ) ) : ?>
+		<label for="<?php echo esc_attr($option_name); ?>"><?php echo $label; ?></label>&nbsp;
+	<?php endif; ?>
+
+	<ul class="wc-shortcodes-clearfix wc-shortcodes-share-buttons">
+		<?php if ( is_array( $val ) && ! empty( $val ) ) : ?>
+			<?php foreach ( $val as $key => $name ) : ?>
+				<li>
+					<p style="width:300px;background-color:#f7f7f7;border:1px solid #dfdfdf;padding:5px 5px;line-height:1;margin:0;text-align:left;cursor:move;">
+						<input type="checkbox" name="<?php echo $option_name; ?>[<?php echo $key; ?>]" value="<?php echo $name; ?>" <?php checked( true, true ); ?> />
+						<?php echo $name; ?>
+					</p>
+				</li>
+				<?php unset( $not_selected[ $key ] ); ?>
+			<?php endforeach; ?>
+		<?php endif; ?>
+
+		<?php foreach ( $not_selected as $key => $name ) : ?>
+			<li>
+				<p style="width:300px;background-color:#f7f7f7;border:1px solid #dfdfdf;padding:5px 5px;line-height:1;margin:0;text-align:left;cursor:move;">
+					<input type="checkbox" name="<?php echo $option_name; ?>[<?php echo $key; ?>]" value="<?php echo $name; ?>" <?php checked( true, false ); ?> />
+					<?php echo $name; ?>
+				</p>
+			</li>
+			<?php unset( $not_selected[ $key ] ); ?>
+		<?php endforeach; ?>
+	</ul>
+
 	<?php if ( isset( $description ) && !empty( $description ) ) : ?>
 		<p class="description"><?php echo $description; ?></p>
 	<?php endif; ?>
@@ -330,6 +389,8 @@ function wc_shortcodes_options_find_sanitize_callback( $type ) {
 			return 'wc_shortcodes_options_sanitize_positive_pixel';
 		case 'pixel' :
 			return 'wc_shortcodes_options_sanitize_pixel';
+		case 'share_buttons' :
+			return 'wc_shortcodes_options_sanitize_share_buttons';
 	}
 
 	return '';
@@ -353,6 +414,24 @@ function wc_shortcodes_options_sanitize_pixel( $value ) {
 		$value = '0';
 
 	return $value."px";
+}
+
+function wc_shortcodes_options_sanitize_share_buttons( $value ) {
+	global $wc_shortcodes_share_buttons;
+
+	$whitelist = $wc_shortcodes_share_buttons;
+
+	$valid = array();
+
+	if ( ! is_array( $value ) || empty( $value ) )
+		return null;
+
+	foreach ( $value as $k => $v ) {
+		if ( array_key_exists( $k, $whitelist ) )
+			$valid[ $k ] = $v;
+	}
+
+	return $valid;
 }
 
 function wc_shortcodes_options_sanitize_background_css( $value ) {
