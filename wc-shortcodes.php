@@ -5,11 +5,11 @@ Plugin URI: http://webplantmedia.com/starter-themes/wordpresscanvas/features/sho
 Description: A family of shortcodes to enhance site functionality.
 Author: Chris Baldelomar
 Author URI: http://webplantmedia.com/
-Version: 1.44
+Version: 1.45
 License: GPLv2 or later
 */
 
-define( 'WC_SHORTCODES_VERSION', '1.44' );
+define( 'WC_SHORTCODES_VERSION', '1.45' );
 define( 'WC_SHORTCODES_PREFIX', 'wc_shortcodes_' );
 define( '_WC_SHORTCODES_PREFIX', '_wc_shortcodes_' );
 define( 'WC_SHORTCODES_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -38,11 +38,6 @@ $wc_shortcodes_social_icons = array(
 	'custom3' => 'Custom 3',
 	'custom4' => 'Custom 4',
 	'custom5' => 'Custom 5',
-	'pinterest' => 'Pinterest',
-	'facebook' => 'Facebook',
-	'twitter' => 'Twitter',
-	'google' => 'Google',
-	'email' => 'Email',
 );
 $wc_shortcodes_share_buttons = array(
 	'pinterest' => 'Pinterest',
@@ -53,6 +48,25 @@ $wc_shortcodes_share_buttons = array(
 );
 $wc_shortcodes_theme_support = array(
 	'fullwidth_container' => '#main',
+	'facebook_social_icon' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/facebook.png',
+	'twitter_social_icon' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/twitter.png',
+	'pinterest_social_icon' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/pinterest.png',
+	'google_social_icon' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/google.png',
+	'bloglovin_social_icon' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/bloglovin.png',
+	'email_social_icon' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/email.png',
+	'flickr_social_icon' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/flickr.png',
+	'instagram_social_icon' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/instagram.png',
+	'rss_social_icon' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/rss.png',
+	'custom1_social_icon' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/picasa.png',
+	'custom2_social_icon' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/shopping.png',
+	'custom3_social_icon' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/youtube.png',
+	'custom4_social_icon' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/etsy.png',
+	'custom5_social_icon' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/tumblr.png',
+	'pinterest_share_button' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/pinterest.png',
+	'facebook_share_button' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/facebook.png',
+	'twitter_share_button' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/twitter.png',
+	'google_share_button' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/google.png',
+	'email_share_button' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/email.png',
 );
 
 require_once( dirname(__FILE__) . '/includes/options.php' ); // define options array
