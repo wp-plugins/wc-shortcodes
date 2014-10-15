@@ -5,11 +5,11 @@ Plugin URI: http://webplantmedia.com/starter-themes/wordpresscanvas/features/sho
 Description: A family of shortcodes to enhance site functionality.
 Author: Chris Baldelomar
 Author URI: http://webplantmedia.com/
-Version: 1.49
+Version: 1.50
 License: GPLv2 or later
 */
 
-define( 'WC_SHORTCODES_VERSION', '1.49' );
+define( 'WC_SHORTCODES_VERSION', '1.50' );
 define( 'WC_SHORTCODES_PREFIX', 'wc_shortcodes_' );
 define( '_WC_SHORTCODES_PREFIX', '_wc_shortcodes_' );
 define( 'WC_SHORTCODES_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -62,11 +62,17 @@ $wc_shortcodes_theme_support = array(
 	'custom3_social_icon' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/youtube.png',
 	'custom4_social_icon' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/etsy.png',
 	'custom5_social_icon' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/tumblr.png',
+	'share_buttons_format' => 'image',
 	'pinterest_share_button' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/pinterest.png',
 	'facebook_share_button' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/facebook.png',
 	'twitter_share_button' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/twitter.png',
 	'google_share_button' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/google.png',
 	'email_share_button' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/email.png',
+	'pinterest_share_text' => 'Pin it',
+	'facebook_share_text' => 'Share',
+	'twitter_share_text' => 'Tweet',
+	'google_share_text' => 'Google+',
+	'email_share_text' => 'Email',
 );
 
 require_once( dirname(__FILE__) . '/includes/options.php' ); // define options array
