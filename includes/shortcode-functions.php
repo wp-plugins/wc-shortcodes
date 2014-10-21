@@ -317,36 +317,75 @@ if( !function_exists('wc_shortcodes_social_icons') ) {
 	function wc_shortcodes_social_icons( $atts ){   
 		extract(shortcode_atts(array(
 			'class'      => '',
-			'size'		 => 'large',
-			'align' => 'left',
+			'size'		 => 'large', // deprecated. using maxheight now
+			'align'      => 'left',
+			'maxheight'  => '0',
 		), $atts));
+
+		$maxheight = (int) $maxheight;
+
+		if ( empty( $maxheight ) ) {
+			switch ( $size ) {
+				case 'small' :
+					$maxheight = 16;
+					break;
+				case 'medium' :
+					$maxheight = 24;
+					break;
+				default :
+					$maxheight = 48;
+			}
+		}
 
 		$class = trim( 'wc-shortcodes-social-icons-wrapper wc-shortcodes-item ' . $class );
 
 		$order = get_option( WC_SHORTCODES_PREFIX . 'social_icons_display' );
+		$format = get_option( WC_SHORTCODES_PREFIX . 'social_icons_format', 'image' );
+		$show_image = 'image' == $format ? true : false;
 
 		if ( ! is_array( $order ) || empty( $order ) ) {
 			return;
 		}
 
+		// classes
+		$classes = array();
+
+		$classes[] = 'wc-shortcodes-social-icons';
+		$classes[] = 'wc-shortcodes-clearfix';
+		$classes[] = 'wc-shortcodes-social-icons-align-'.$align;
+		$classes[] = 'wc-shortcodes-maxheight-'.$maxheight;
+		$classes[] = 'wc-shortcodes-social-icons-format-'.$format;
+
 		$first = true;
 
 		$html = '<div class="' . $class . '">';
-			$html .= '<ul class="wc-shortcodes-social-icons wc-shortcodes-clearfix wc-shortcodes-social-icons-align-'.$align.' wc-shortcodes-social-icons-size-'.$size.'">';
+			$html .= '<ul class="'.implode( ' ', $classes ).'">';
 				foreach ( $order as $key => $value ) {
 					$link_option_name = WC_SHORTCODES_PREFIX . $key . '_link';
-					$icon_option_name = WC_SHORTCODES_PREFIX . $key . '_icon';
+					$image_icon_option_name = WC_SHORTCODES_PREFIX . $key . '_icon';
+					$font_icon_option_name = WC_SHORTCODES_PREFIX . $key . '_font_icon';
 
-					if (  $icon_url = get_option( $icon_option_name ) ) {
-						$social_link = get_option( $link_option_name );
-						$social_link = apply_filters( 'wc_shortcodes_social_link', $social_link, $key );
+					$social_link = get_option( $link_option_name );
+					$social_link = apply_filters( 'wc_shortcodes_social_link', $social_link, $key );
 
-						$first_class = $first ? ' first-icon' : '';
-						$first = false;
+					$first_class = $first ? ' first-icon' : '';
+					$first = false;
+
+					if ( $show_image ) {
+						$icon_url = get_option( $image_icon_option_name );
 
 						$html .= '<li class="wc-shortcodes-social-icon wc-shortcode-social-icon-' . $key . $first_class . '">';
 							$html .='<a target="_blank" href="'.$social_link.'">';
 								$html .= '<img src="'.$icon_url.'">';
+							$html .= '</a>';
+						$html .= '</li>';
+					}
+					else {
+						$icon_class = get_option( $font_icon_option_name );
+
+						$html .= '<li class="wc-shortcodes-social-icon wc-shortcode-social-icon-' . $key . $first_class . '">';
+							$html .='<a target="_blank" href="'.$social_link.'">';
+								$html .= '<i class="fa '.$icon_class.'"></i>';
 							$html .= '</a>';
 						$html .= '</li>';
 					}
@@ -1385,7 +1424,6 @@ if ( ! function_exists('wc_shortcodes_share_buttons') ) {
 		$share_buttons = get_option( WC_SHORTCODES_PREFIX . 'share_buttons_display' );
 		$size = sizeof( $share_buttons );
 		$format = get_option( WC_SHORTCODES_PREFIX . 'share_buttons_format', 'image' );
-		$show_image = 'image' == $format ? true : false;
 
 		if ( empty( $share_buttons ) )
 			return '';
@@ -1396,8 +1434,9 @@ if ( ! function_exists('wc_shortcodes_share_buttons') ) {
 		$classes[] = 'wc-shortcodes-share-buttons';
 		$classes[] = 'wc-shortcodes-share-buttons-format-'.$format;
 		$classes[] = 'wc-shortcodes-share-buttons-size-'.$size;
-		if ( ! empty( $class ) )
+		if ( ! empty( $class ) ) {
 			$classes[] = $class;
+		}
 
 		$style_attr = '';
 
@@ -1412,17 +1451,25 @@ if ( ! function_exists('wc_shortcodes_share_buttons') ) {
 					$icon_option_name = WC_SHORTCODES_PREFIX . $key . '_share_text';
 					$icon_text = get_option( $icon_option_name );
 
+					$font_icon_option_name = WC_SHORTCODES_PREFIX . $key . '_share_font_icon';
+					$icon_class = get_option( $font_icon_option_name );
+
 					$first_class = $first ? ' first-share-button' : '';
 
 					switch ( $key ) {
 						case 'pinterest' :
 							$html .= '<li class="wc-shortcodes-share-button-icon wc-shortcode-share-button-icon-' . $key . $first_class . '">';
 								$html .='<a href="javascript:void((function()%7Bvar%20e=document.createElement(&apos;script&apos;);e.setAttribute(&apos;type&apos;,&apos;text/javascript&apos;);e.setAttribute(&apos;charset&apos;,&apos;UTF-8&apos;);e.setAttribute(&apos;src&apos;,&apos;http://assets.pinterest.com/js/pinmarklet.js?r=&apos;+Math.random()*99999999);document.body.appendChild(e)%7D)());">';
-									if ( $show_image ) {
-										$html .= '<img src="'.$icon_url.'" alt="'.$icon_text.'">';
-									}
-									else {
-										$html .= '<span class="wc-share-button-"'.$key.'>'.$icon_text.'</span>';
+									switch ( $format ) {
+										case 'image' :
+											$html .= '<img src="'.$icon_url.'" alt="'.$icon_text.'">';
+											break;
+										case 'icon' :
+											$html .= '<i class="fa '.$icon_class.'"></i>';
+											break;
+										default :
+											$html .= '<i class="fa '.$icon_class.'"></i><span class="wc-share-button-'.$key.'">'.$icon_text.'</span>';
+											break;
 									}
 								$html .= '</a>';
 							$html .= '</li>';
@@ -1430,11 +1477,16 @@ if ( ! function_exists('wc_shortcodes_share_buttons') ) {
 						case 'facebook' :
 							$html .= '<li class="wc-shortcodes-share-button-icon wc-shortcode-share-button-icon-' . $key . $first_class . '">';
 								$html .='<a target="_blank" onclick="return !window.open(this.href, \'Facebook\', \'width=640,height=300\')" href="http://www.facebook.com/sharer/sharer.php?u='.urlencode(get_permalink()).'">';
-									if ( $show_image ) {
-										$html .= '<img src="'.$icon_url.'" alt="'.$icon_text.'">';
-									}
-									else {
-										$html .= '<span class="wc-share-button-"'.$key.'>'.$icon_text.'</span>';
+									switch ( $format ) {
+										case 'image' :
+											$html .= '<img src="'.$icon_url.'" alt="'.$icon_text.'">';
+											break;
+										case 'icon' :
+											$html .= '<i class="fa '.$icon_class.'"></i>';
+											break;
+										default :
+											$html .= '<i class="fa '.$icon_class.'"></i><span class="wc-share-button-'.$key.'">'.$icon_text.'</span>';
+											break;
 									}
 								$html .= '</a>';
 							$html .= '</li>';
@@ -1442,11 +1494,16 @@ if ( ! function_exists('wc_shortcodes_share_buttons') ) {
 						case 'twitter' :
 							$html .= '<li class="wc-shortcodes-share-button-icon wc-shortcode-share-button-icon-' . $key . $first_class . '">';
 								$html .='<a target="_blank" onclick="return !window.open(this.href, \'Twitter\', \'width=500,height=430\')" href="https://twitter.com/share?url='.urlencode(get_permalink()).'" class="share-button-twitter" data-lang="en">';
-									if ( $show_image ) {
-										$html .= '<img src="'.$icon_url.'" alt="'.$icon_text.'">';
-									}
-									else {
-										$html .= '<span class="wc-share-button-"'.$key.'>'.$icon_text.'</span>';
+									switch ( $format ) {
+										case 'image' :
+											$html .= '<img src="'.$icon_url.'" alt="'.$icon_text.'">';
+											break;
+										case 'icon' :
+											$html .= '<i class="fa '.$icon_class.'"></i>';
+											break;
+										default :
+											$html .= '<i class="fa '.$icon_class.'"></i><span class="wc-share-button-'.$key.'">'.$icon_text.'</span>';
+											break;
 									}
 								$html .= '</a>';
 							$html .= '</li>';
@@ -1454,11 +1511,16 @@ if ( ! function_exists('wc_shortcodes_share_buttons') ) {
 						case 'email' :
 							$html .= '<li class="wc-shortcodes-share-button-icon wc-shortcode-share-button-icon-' . $key . $first_class . '">';
 								$html .='<a title="Share by Email" target="_self" href="mailto:?subject=&amp;body='.urlencode(get_permalink()).'">';
-									if ( $show_image ) {
-										$html .= '<img src="'.$icon_url.'" alt="'.$icon_text.'">';
-									}
-									else {
-										$html .= '<span class="wc-share-button-"'.$key.'>'.$icon_text.'</span>';
+									switch ( $format ) {
+										case 'image' :
+											$html .= '<img src="'.$icon_url.'" alt="'.$icon_text.'">';
+											break;
+										case 'icon' :
+											$html .= '<i class="fa '.$icon_class.'"></i>';
+											break;
+										default :
+											$html .= '<i class="fa '.$icon_class.'"></i><span class="wc-share-button-'.$key.'">'.$icon_text.'</span>';
+											break;
 									}
 								$html .= '</a>';
 							$html .= '</li>';
@@ -1467,11 +1529,16 @@ if ( ! function_exists('wc_shortcodes_share_buttons') ) {
 							$html .= '<li class="wc-shortcodes-share-button-icon wc-shortcode-share-button-icon-' . $key . $first_class . '">';
 								$html .='<a href="https://plus.google.com/share?url='.urlencode(get_permalink()).'" onclick="javascript:window.open(this.href,
 \'\', \'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600\');return false;">';
-									if ( $show_image ) {
-										$html .= '<img src="'.$icon_url.'" alt="'.$icon_text.'">';
-									}
-									else {
-										$html .= '<span class="wc-share-button-"'.$key.'>'.$icon_text.'</span>';
+									switch ( $format ) {
+										case 'image' :
+											$html .= '<img src="'.$icon_url.'" alt="'.$icon_text.'">';
+											break;
+										case 'icon' :
+											$html .= '<i class="fa '.$icon_class.'"></i>';
+											break;
+										default :
+											$html .= '<i class="fa '.$icon_class.'"></i><span class="wc-share-button-'.$key.'">'.$icon_text.'</span>';
+											break;
 									}
 								$html .= '</a>';
 							$html .= '</li>';
