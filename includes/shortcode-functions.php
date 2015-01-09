@@ -1094,11 +1094,10 @@ if( ! function_exists( 'wc_shortcodes_posts' ) ) {
 	function wc_shortcodes_posts( $atts ) {
 		global $data;
 		global $post;
+		global $wc_shortcodes_posts_query;
 
 		static $instance = 0;
 		$instance++;
-
-		wp_enqueue_script('wc-shortcodes-posts');
 
 		if ( (is_front_page() || is_home() ) ) {
 			$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : ( ( get_query_var( 'page' ) ) ? get_query_var( 'page' ) : 1 );
@@ -1140,12 +1139,32 @@ if( ! function_exists( 'wc_shortcodes_posts' ) ) {
 			'gutter_space' => '20', // gutter width percentage relative to parent element width
 			'heading_type' => 'h2', // heading tag for title
 			'layout' => 'masonry', // blog layout
+			'template' => 'box',
+			'excerpt_length' => '55',
 		), $atts );
+
+		// changed default layout name. Let's catch old inputs
+		$valid_layouts = array( 'masonry', 'grid' );
+		if ( ! in_array( $atts['layout'], $valid_layouts ) ) {
+			$atts['layout'] = "masonry";
+		}
+
+		$is_masonry =  'masonry' == $atts['layout'] ? true : false;
+
+		if ( $is_masonry ) {
+			wp_enqueue_script('wc-shortcodes-posts');
+		}
+
+		$valid_templates = array( 'box', 'borderless' );
+		if ( ! in_array( $atts['template'], $valid_templates ) ) {
+			$atts['template'] = "box";
+		}
 
 		// clean input values
 		$atts['terms'] = wc_shortcodes_comma_delim_to_array( $atts['terms'] );
 		$atts['post__in'] = wc_shortcodes_comma_delim_to_array( $atts['post__in'] );
 		$atts['columns'] == (int) $atts['columns'];
+		$atts['excerpt_length'] = (int) $atts['excerpt_length'];
 		$atts['order'] = strtoupper( $atts['order'] );
 		$atts['heading_type'] = strtolower( $atts['heading_type'] );
 
@@ -1203,20 +1222,21 @@ if( ! function_exists( 'wc_shortcodes_posts' ) ) {
 		($atts['filtering'] == "yes") ? ($atts['filtering'] = true) : ($atts['filtering'] = false);
 		($atts['order'] == "ASC") ? ($atts['order'] = "ASC") : ($atts['order'] = "DESC");
 
-		// changed default layout name. Let's catch old inputs
-		if ($atts['layout'] == "isotope") {
-			$atts['layout'] = "masonry";
-		}
-
-		$ml_query = new WP_Query($atts);
+		$wc_shortcodes_posts_query = new WP_Query($atts);
+		$wc_shortcodes_posts_query->excerpt_length = $atts['excerpt_length'];
 
 		$html = '';
 
 		$class = array();
 		$class[] = 'wc-shortcodes-posts';
+		$class[] = 'wc-shortcodes-clearfix';
 		$class[] = 'wc-shortcodes-posts-col-' . $atts["columns"];
 		$class[] = 'wc-shortcodes-posts-layout-' . $atts['layout'];
-
+		$class[] = 'wc-shortcodes-posts-template-' . $atts['template'];
+		$class[] = 'wc-shortcodes-posts-gutter-space-' . $atts['gutter_space'];
+		if ( ! $is_masonry ) {
+			$class[] = 'wc-shortcodes-posts-no-masonry';
+		}
 		if ( $atts['filtering'] ) {
 			ob_start();
 			include( 'templates/nav-filtering.php' );
@@ -1225,14 +1245,14 @@ if( ! function_exists( 'wc_shortcodes_posts' ) ) {
 
 		$html .= '<div id="wc-shortcodes-posts-'.$instance.'" data-gutter-space="'.$atts["gutter_space"].'" data-columns="'.$atts["columns"].'" class="' . implode( ' ', $class ) . '">';
 
-			while( $ml_query->have_posts() ) :
-				$ml_query->the_post();
+			while( $wc_shortcodes_posts_query->have_posts() ) :
+				$wc_shortcodes_posts_query->the_post();
 				
 				if ( $atts['content'] && empty( $post->post_excerpt ) && empty( $post->post_content ) )
 					$atts['content'] = false;
 
 				ob_start();
-				include('templates/index.php');
+				include('templates/'.$atts['template'].'/index.php');
 				$html .= ob_get_clean();
 
 			endwhile;
