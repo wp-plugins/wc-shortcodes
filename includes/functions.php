@@ -14,41 +14,15 @@ function wc_shortcodes_check_supports() {
 }
 add_action( 'init', 'wc_shortcodes_check_supports' );
 
-/*
- * On New Version
- */
-function wc_shortcodes_options_activation() {
-	global $wc_shortcodes_options;
-
-	$initialize = false;
-
-	if ( ! WC_SHORTCODES_CURRENT_VERSION ) {
-		$initialize = true;
-	}
-	else if ( version_compare( WC_SHORTCODES_VERSION, WC_SHORTCODES_CURRENT_VERSION ) > 0 ) {
-		$initialize = true;
-	}
-
-	if ( $initialize ) {
-		update_option( WC_SHORTCODES_PREFIX . 'current_version', WC_SHORTCODES_VERSION );
-
-		foreach ( $wc_shortcodes_options as $o ) {
-			foreach ( $o['sections'] as $oo ) {
-				foreach ( $oo['options'] as $ooo ) {
-					$option_name = WC_SHORTCODES_PREFIX . $ooo['id'];
-					if ( WC_SHORTCODES_PREFIX . 'social_icons_display' == $option_name ) {
-						$default = wc_shortcodes_default_social_icons();
-						add_option( $option_name, $default );
-					}
-					else {
-						add_option( $option_name, $ooo['default'] );
-					}
-				}
-			}
-		}
-	} 
+function wc_shortcodes_add_action_links( $links ) {
+	return array_merge(
+		array(
+			'settings' => '<a href="' . admin_url( 'themes.php?page=wc-shortcodes' ) . '">' . __( 'Settings', 'wc-shortcodes' ) . '</a>'
+		),
+		$links
+	);
 }
-add_action( 'init', 'wc_shortcodes_options_activation', 200 );
+add_filter( 'plugin_action_links_' . WC_SHORTCODES_PLUGIN_BASENAME, 'wc_shortcodes_add_action_links' );
 
 /**
  * filter social url. For example, we want to add

@@ -5,16 +5,17 @@ Plugin URI: http://webplantmedia.com/starter-themes/wordpresscanvas/features/sho
 Description: A family of shortcodes to enhance site functionality.
 Author: Chris Baldelomar
 Author URI: http://webplantmedia.com/
-Version: 1.57
+Version: 1.58
 License: GPLv2 or later
 */
 
-define( 'WC_SHORTCODES_VERSION', '1.57' );
+define( 'WC_SHORTCODES_VERSION', '1.58' );
 define( 'WC_SHORTCODES_PREFIX', 'wc_shortcodes_' );
 define( '_WC_SHORTCODES_PREFIX', '_wc_shortcodes_' );
 define( 'WC_SHORTCODES_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'WC_SHORTCODES_CURRENT_VERSION', get_option( WC_SHORTCODES_PREFIX . 'current_version' ) );
 define( 'WC_SHORTCODES_FONT_AWESOME_ENABLED', get_option( WC_SHORTCODES_PREFIX . 'enable_font_awesome', true ) );
+define( 'WC_SHORTCODES_PLUGIN_BASENAME', plugin_basename( plugin_dir_path( realpath( __FILE__ ) ) . 'wc-shortcodes.php' ) );
 
 global $wc_shortcodes_options;
 global $wc_shortcodes_social_icons;
@@ -45,6 +46,7 @@ $wc_shortcodes_share_buttons = array(
 	'twitter' => 'Twitter',
 	'google' => 'Google',
 	'email' => 'Email',
+	'print' => 'Print',
 );
 $wc_shortcodes_theme_support = array(
 	'fullwidth_container' => '#main',
@@ -93,11 +95,14 @@ $wc_shortcodes_theme_support = array(
 	'email_share_text' => 'Email',
 	'email_share_font_icon' => 'fa-envelope',
 	'email_share_button' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/email.png',
+	'print_share_text' => 'Print',
+	'print_share_font_icon' => 'fa-print',
+	'print_share_button' => WC_SHORTCODES_PLUGIN_URL . 'includes/img/print.png',
 );
 
+require_once( plugin_dir_path( __FILE__ ) . 'includes/vendors/wpc-settings-framework/init.php' );
 require_once( dirname(__FILE__) . '/includes/options.php' ); // define options array
 require_once( dirname(__FILE__) . '/includes/functions.php' ); // Adds basic filters and actions
-require_once( dirname(__FILE__) . '/includes/settings.php' ); // Adds settings
 require_once( dirname(__FILE__) . '/includes/scripts.php' ); // Adds plugin JS and CSS
 require_once( dirname(__FILE__) . '/includes/shortcode-functions.php'); // Main shortcode functions
 require_once( dirname(__FILE__) . '/includes/mce/shortcodes_tinymce.php'); // Add mce buttons to post editor

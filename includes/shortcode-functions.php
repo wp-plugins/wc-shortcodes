@@ -376,7 +376,7 @@ if( !function_exists('wc_shortcodes_social_icons') ) {
 
 						$html .= '<li class="wc-shortcodes-social-icon wc-shortcode-social-icon-' . $key . $first_class . '">';
 							$html .='<a target="_blank" href="'.$social_link.'">';
-								$html .= '<img src="'.$icon_url.'">';
+								$html .= '<img src="'.$icon_url.'" alt="'.$value.'">';
 							$html .= '</a>';
 						$html .= '</li>';
 					}
@@ -1141,6 +1141,7 @@ if( ! function_exists( 'wc_shortcodes_posts' ) ) {
 			'layout' => 'masonry', // blog layout
 			'template' => 'box',
 			'excerpt_length' => '55',
+			'date_format' => 'M j, Y',
 		), $atts );
 
 		// changed default layout name. Let's catch old inputs
@@ -1549,8 +1550,7 @@ if ( ! function_exists('wc_shortcodes_share_buttons') ) {
 							break;
 						case 'google' :
 							$html .= '<li class="wc-shortcodes-share-button-icon wc-shortcode-share-button-icon-' . $key . $first_class . '">';
-								$html .='<a href="https://plus.google.com/share?url='.urlencode(get_permalink()).'" onclick="javascript:window.open(this.href,
-\'\', \'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600\');return false;">';
+								$html .='<a href="https://plus.google.com/share?url='.urlencode(get_permalink()).'" onclick="javascript:window.open(this.href, \'\', \'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600\');return false;">';
 									switch ( $format ) {
 										case 'image' :
 											$html .= '<img src="'.$icon_url.'" alt="'.$icon_text.'">';
@@ -1562,6 +1562,28 @@ if ( ! function_exists('wc_shortcodes_share_buttons') ) {
 											$html .= '<i class="fa '.$icon_class.'"></i><span class="wc-share-button-'.$key.'">'.$icon_text.'</span>';
 											break;
 									}
+								$html .= '</a>';
+							$html .= '</li>';
+							break;
+						case 'print' :
+							$html .= '<li class="wc-shortcodes-share-button-icon wc-shortcode-share-button-icon-' . $key . $first_class . '">';
+								if ( is_single() ) {
+									$html .='<a href="#" onclick="javascript:window.print();return false;">';
+								}
+								else {
+									$html .='<a href="#" onclick="javascript:w=window.open(\''.get_permalink().'\');w.print();w.close();return false;">';
+								}
+										switch ( $format ) {
+											case 'image' :
+												$html .= '<img src="'.$icon_url.'" alt="'.$icon_text.'">';
+												break;
+											case 'icon' :
+												$html .= '<i class="fa '.$icon_class.'"></i>';
+												break;
+											default :
+												$html .= '<i class="fa '.$icon_class.'"></i><span class="wc-share-button-'.$key.'">'.$icon_text.'</span>';
+												break;
+										}
 								$html .= '</a>';
 							$html .= '</li>';
 							break;

@@ -1,6 +1,9 @@
 /**
- * WC Shortcodes Gallery Settings
+ * @author Chris Baldelomar
+ * @website http://webplantmedia.com/
  */
+
+
 (function($) {
 	"use strict";
 
@@ -21,14 +24,13 @@
 			});
 			
 			
-		if(options.state === 'gallery-library' && id_array.length &&  !isNaN(parseInt(id_array[0],10)))
-		{
+		if(options.state === 'gallery-library' && id_array.length &&  !isNaN(parseInt(id_array[0],10))) {
 			options.state = 'gallery-edit';
 		}
 		return selection;
 	};
 
-	$body.on('click', '.wc-shortcodes-image-upload', function( event ) {
+	$body.on('click', '.wpcsf-image-upload', function( event ) {
 		event.preventDefault();
 		
 		var clicked = $(this),
@@ -56,12 +58,12 @@
 			selection: prefill
 		});
 
-		if ( 'wc_shortcodes_insert_single' === options.state ) {
+		if ( 'wpc_settings_framework_insert_single' === options.state ) {
 			// add the single insert state
 			file_frame[frame_key].states.add([
 				// Main states.
 				new media.controller.Library({
-					id:         'wc_shortcodes_insert_single',
+					id:         'wpc_settings_framework_insert_single',
 					title: clicked.data( 'title' ),
 					priority:   20,
 					toolbar:    'select',
@@ -76,11 +78,11 @@
 				})
 			]);
 		}
-		else if ( 'wc_shortcodes_insert_multi' === options.state ) {
+		else if ( 'wpc_settings_framework_insert_multi' === options.state ) {
 			// add the single insert state
 			file_frame[frame_key].states.add([
 				new media.controller.Library({
-					id:         'wc_shortcodes_insert_multi',
+					id:         'wpc_settings_framework_insert_multi',
 					title: clicked.data( 'title' ),
 					priority:   20,
 					toolbar:    'select',
@@ -146,6 +148,9 @@
 			
 			if ( target.length ) {
 				target.val( values.join(',') ).trigger('change');
+
+				// triggers change in customizer
+				target.keyup();
 			}
 			
 			if ( preview.length ) {
@@ -156,7 +161,7 @@
 		// Finally, open the modal
 		file_frame[frame_key].open();
 	})
-	.on('click', '.wc-shortcodes-restore-image', function( e ) {
+	.on('click', '.wpcsf-restore-image', function( e ) {
 		e.preventDefault();
 
 		var clicked = $(this),
@@ -173,8 +178,10 @@
 		else {
 			$(preview).html("").hide();
 		}
+
+		$(target).keyup();
 	})
-	.on('click', '.wc-shortcodes-delete-image', function( e ) {
+	.on('click', '.wpcsf-delete-image', function( e ) {
 		e.preventDefault();
 
 		var clicked = $(this),
@@ -188,10 +195,7 @@
 		if ( preview.length ) {
 			$(preview).html("").hide();
 		}
-	});
 
-	$(document).ready(function($){
-		$('.wc-shortcodes-share-buttons').sortable({ axis: "y" });
-	});
-
+		$(target).keyup();
+	})
 })(jQuery);
