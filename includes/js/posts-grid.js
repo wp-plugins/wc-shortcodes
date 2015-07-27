@@ -26,7 +26,7 @@
 			});
 		});
 
-		var $filterNav = $('.wc-shortcodes-filtering.wc-shortcodes-filtering-layout-grid');
+		var $filterNav = $('.wc-shortcodes-filtering.wc-shortcodes-filtering-dynamic.wc-shortcodes-filtering-layout-grid');
 		var $term = $filterNav.find('.wc-shortcodes-term');
 		$term.click( function( event ) {
 			event.preventDefault();
@@ -37,8 +37,8 @@
 			var selector = $(this).attr('data-filter');
 			var target = $filterNav.data('target');
 			var $target = $(target);
+			var $targetPosts = $target.children('.wc-shortcodes-post-box');
 			$target.animate({opacity: 0}, 300, function() {
-				var $targetPosts = $target.children('.wc-shortcodes-post-box');
 				if ( '*' == selector ) {
 					$targetPosts.show();
 				}
